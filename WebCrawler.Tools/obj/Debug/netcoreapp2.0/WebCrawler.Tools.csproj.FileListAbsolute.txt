@@ -1,0 +1,9 @@
+D:\C#\RIW2\WebCrawler.Tools\bin\Debug\netcoreapp2.0\WebCrawler.Tools.deps.json
+D:\C#\RIW2\WebCrawler.Tools\bin\Debug\netcoreapp2.0\WebCrawler.Tools.dll
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.csprojResolveAssemblyReference.cache
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.csproj.CoreCompileInputs.cache
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.AssemblyInfoInputs.cache
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.AssemblyInfo.cs
+D:\C#\RIW2\WebCrawler.Tools\bin\Debug\netcoreapp2.0\WebCrawler.Tools.pdb
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.dll
+D:\C#\RIW2\WebCrawler.Tools\obj\Debug\netcoreapp2.0\WebCrawler.Tools.pdb

@@ -1,0 +1,14 @@
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.deps.json
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.runtimeconfig.json
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.runtimeconfig.dev.json
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.dll
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.pdb
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.Tools.dll
+D:\C#\RIW2\WebCrawler.ConsoleUI\bin\Debug\netcoreapp2.0\WebCrawler.Tools.pdb
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.csprojResolveAssemblyReference.cache
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.csproj.CoreCompileInputs.cache
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.AssemblyInfoInputs.cache
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.AssemblyInfo.cs
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.csproj.CopyComplete
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.dll
+D:\C#\RIW2\WebCrawler.ConsoleUI\obj\Debug\netcoreapp2.0\WebCrawler.ConsoleUI.pdb
