@@ -29,6 +29,10 @@ namespace WebCrawler.Tools
         if (dns == null) return null;
         ApplicationCache.Dns.Add(uri.Authority, dns);
       }
+      if (ApplicationCache.Dns.Count > RunSettings.MaxDnsSize)
+      {
+        ApplicationCache.TrimDnsCache();
+      }
 
       var relativePath = uri.AbsolutePath;
       var requestMessage = new StringBuilder();
@@ -52,11 +56,41 @@ namespace WebCrawler.Tools
       return BuildTcpResponse(response);
     }
 
-    public static RobotsTextResponse GetRobotsResponse(Uri uri)
+
+    public static RobotsTextResponse GetRobotsResponse(Uri uri, int retries = 0, string cacheKey = null)
     {
+      if (cacheKey == null)
+      {
+        //in case of redirects, keep same key
+        cacheKey = uri.Authority;
+      }
+
+      if (retries == RunSettings.MaxRetries)
+      {
+        ApplicationCache.Robots.Add(cacheKey, null);
+        return null;
+      }
+      retries++;
       var robots = new Uri($"{uri.Scheme}://{uri.Authority}/robots.txt");
       var page = Download(robots);
-      return RobotsTextResponse.ParseText(page.Html);
+      if (page == null)
+      {
+        ApplicationCache.Robots.Add(cacheKey, null);
+        return null;
+      }
+      if (page.StatusCode != HttpStatusCode.OK && page.StatusCode != HttpStatusCode.NotModified)
+      {
+        if ((page.StatusCode == HttpStatusCode.Moved || page.StatusCode == HttpStatusCode.Redirect
+             && page.StatusCode == HttpStatusCode.TemporaryRedirect) && page.Headers.ContainsKey("Location"))
+        {
+          return GetRobotsResponse(new Uri(page.Headers["Location"]), retries, cacheKey);
+        }
+        ApplicationCache.Robots.Add(cacheKey, null);
+        return null;
+      }
+      var parsedRobots = RobotsTextResponse.ParseText(page.Html);
+      ApplicationCache.Robots.Add(cacheKey, parsedRobots);
+      return parsedRobots;
     }
 
     private static TcpClient GetTcpClient(Uri uri, DnsResponse dns)
@@ -86,7 +120,7 @@ namespace WebCrawler.Tools
       if (uri.Scheme.Length == 5)
       {
         stream = new SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
-        ((SslStream) stream).AuthenticateAsClient(uri.Authority);
+        ((SslStream)stream).AuthenticateAsClient(uri.Authority);
       }
       return stream;
     }
@@ -138,11 +172,11 @@ namespace WebCrawler.Tools
     {
       var response = new TcpResponse();
       var headers = GetHeaders(downloaded, out int index);
-      response.Html = downloaded.Substring(index, downloaded.Length - index);
+      response.Html = index < downloaded.Length ?  downloaded.Substring(index, downloaded.Length - index) : string.Empty;
       response.StatusCode = (HttpStatusCode)Convert.ToInt32(headers[0].Substring(9, 3));
       for (int i = 1; i < headers.Count - 1; i++)
       {
-        var items = headers[i].Split(':',2,StringSplitOptions.RemoveEmptyEntries);
+        var items = headers[i].Split(':', 2, StringSplitOptions.RemoveEmptyEntries);
         response.Headers[items[0]] = items[1];
       }
       return response;
@@ -158,7 +192,7 @@ namespace WebCrawler.Tools
       {
         if (downloaded[i] == '\r' && downloaded[i + 1] == '\n')
         {
-          if (downloaded[i + 2] == '\r' && downloaded[i + 3] == '\n') break;
+          if (i+3 < downloaded.Length && downloaded[i + 2] == '\r' && downloaded[i + 3] == '\n') break;
           headers.Add(newLine.ToString());
           newLine.Clear();
         }
@@ -167,7 +201,7 @@ namespace WebCrawler.Tools
           newLine.Append(downloaded[i]);
         }
       }
-      index = i+4;
+      index = i + 4;
       return headers;
     }
 

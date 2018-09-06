@@ -86,7 +86,7 @@ namespace WebCrawler.Tools.Dns
         if (type != 1)
         {
           skip = true;
-          Console.WriteLine("Non ipv4 address");
+          //Console.WriteLine("Non ipv4 address");
         }
         idx += 4; //skip name, type and class 2+2+2
 
@@ -95,7 +95,7 @@ namespace WebCrawler.Tools.Dns
         var expireDate = DateTime.Now.AddSeconds(ttl);
         idx += 4;
 
-        //since we extract ANAME, the length is 4 bytes
+        //since we extract IPV4 addresses, the length is 4 bytes
         var rdLength = (responseBytes[idx] << 8) | responseBytes[idx + 1];
         idx += 2;
         if (!skip)

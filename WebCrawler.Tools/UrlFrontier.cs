@@ -1,35 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace WebCrawler.Tools
 {
   public class UrlFrontier
   {
+    public static String[] AvailableFormats { get; set; } = {"html", "htm", "php", "asp", "aspx", "jsp"};
+
+    public static Queue<string> CurrentWebsiteUrlsQueue { get; set; } = new Queue<string>();
+
     public static Queue<string> UrlsQueue { get; set; } = new Queue<string>();
 
     public static void Enqueue(Uri baseUrl,string anchor)
     {
-      var url = GetUrlFromAnchor(baseUrl, anchor);
-      if (CanBeSkipped(baseUrl, anchor, url)) return;
-
-      if (UrlsQueue.Count > RunSettings.MaxQueuedUrlsSize)
+      var hashTagIndex = anchor.IndexOf('#');
+      if (hashTagIndex >= 0)
       {
-        //mecanism de asteptare?
+        anchor = anchor.Substring(0, hashTagIndex);
+      }
+     
+      if (IsAbsoluteUrl(anchor))
+      {
+        if (UrlsQueue.Count > RunSettings.MaxQueuedUrlsSize || CanBeSkipped(anchor) || !AvailableFormat(new Uri(anchor).Segments.Last()))
+        {
+          return;
+        }
+        
+        if (anchor.Contains(baseUrl.Authority))
+        {
+          CurrentWebsiteUrlsQueue.Enqueue(anchor);
+        }
+        else
+        {
+          var newUri= new Uri(anchor);
+          var absoluteUri = $"{newUri.Scheme}://{newUri.Authority}";
+          if (!CanBeSkipped(absoluteUri))
+          {
+            //enqueue only home page, the crawler will download only what they have exposed on their website
+            UrlsQueue.Enqueue(absoluteUri);
+          }
+        }
         return;
       }
-      UrlsQueue.Enqueue(url);
+
+      if (!AvailableFormat(anchor))
+      {
+        return;
+      }
+      var url = GetUrlFromAnchor(baseUrl, anchor);
+      if (url == null)
+      {
+        return;
+      }
+      var absoluteUrl = url.AbsoluteUri;
+
+      if (CanBeSkipped(absoluteUrl) || !AvailableFormat(url.Segments.Last())) return;
+
+      //if (CurrentWebsiteUrlsQueue.Count > RunSettings.MaxQueuedUrlsSize)
+      //{
+      //  return;
+      //}
+      CurrentWebsiteUrlsQueue.Enqueue(absoluteUrl);
     }
 
-  
-
-    public static bool CanBeSkipped(Uri baseUrl, string anchor, string url)
+    private static bool AvailableFormat(string anchor)
     {
-      if (!url.StartsWith("http") || baseUrl.AbsoluteUri.Equals(anchor, StringComparison.OrdinalIgnoreCase))
+      var dotIndex = anchor.IndexOf('.');
+      if (dotIndex < 0)
       {
         return true;
       }
-      if (ApplicationCache.VisitedUrls.Contains(url) || UrlsQueue.Contains(url))
+      return AvailableFormats.Any(format => anchor.EndsWith(format));
+    }
+
+
+    public static bool CanBeSkipped(string url)
+    {
+      if (!url.StartsWith("http"))
+      {
+        return true;
+      }
+      if (ApplicationCache.VisitedUrls.Contains(url) || CurrentWebsiteUrlsQueue.Contains(url) || UrlsQueue.Contains(url) )
       {
         return true;
       }
@@ -37,21 +90,18 @@ namespace WebCrawler.Tools
     }
 
 
-    public static string GetUrlFromAnchor(Uri baseUrl, string anchor)
+    public static Uri GetUrlFromAnchor(Uri baseUrl, string anchor)
     {
 
-      var absoluteUrl = IsAbsoluteUrl(anchor) ? anchor : 
-        Uri.TryCreate(baseUrl, anchor, out Uri tempUri) ? tempUri.AbsoluteUri : 
-        string.Empty;
-
-      var hashtagIndex = absoluteUrl.IndexOf("#", StringComparison.Ordinal);
-
-      return hashtagIndex >= 0 ? absoluteUrl.Substring(0, hashtagIndex) : absoluteUrl;
+      Uri.TryCreate(baseUrl, anchor, out Uri tempUri);
+      return tempUri;
     }
 
     static bool IsAbsoluteUrl(string url)
     {
       return Uri.IsWellFormedUriString(url, UriKind.Absolute);
     }
+
   }
+
 }

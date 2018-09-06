@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WebCrawler.Tools;
 using WebCrawler.Tools.Dns;
 
@@ -9,15 +10,22 @@ namespace RIW2
     static void Main(string[] args)
     {
       RunSettings.Initialize();
-
-      //MakeDnsRequest();
-      System.Web.HttpUtility.HtmlDecode("&euro;");
+      FileTreeWorker.CleanDirectory(RunSettings.SavingLocationPath);
+      //var siteUrl = "http://riweb.tibeica.com";
       var siteUrl = "http://riweb.tibeica.com";
-      int level = 5;
+
+
       var crawler = new Crawler();
-      crawler.StartFrom(siteUrl, level);
+      crawler.StartFrom(siteUrl);
+
+
       //var dns = DnsResolver.GetDnsAddress("www.tuiasi.ro");
-      var a = new Uri("http://riweb.tibeica.com/crawl");
+      //var a = new Uri("http://riweb.tibeica.com/crawl");
+      //var d = new Dictionary<string,object>();
+      //d.Add("fas",null);
+      //object o;
+      //var ok = d.TryGetValue("ffas", out o);
+      //Console.WriteLine($"is null {o==null} success :{ok} ");
     }
 
    
